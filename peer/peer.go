@@ -5,7 +5,7 @@ import "net"
 
 func Hello(ip net.IP) {
 	//fmt.Println(" ", ip)
-	conn, err := net.DialTimeout("tcp", "["+ip.String()+"]:8333", 10000)
+	conn, err := net.DialTimeout("tcp", "["+ip.String()+"]:8333", 100000000)
 	if err == nil {
 		fmt.Println(" ", conn, err)
 	}
