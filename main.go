@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "net"
+import "github.com/andrewarrow/gbit/peer"
 
 var Seeds = []string{
 	"seed.bitcoin.sipa.be",
@@ -13,6 +14,12 @@ var Seeds = []string{
 }
 
 func main() {
-	ips, _ := net.LookupIP(Seeds[0])
-	fmt.Println("gbit <?>", ips)
+	for _, seed := range Seeds {
+		ips, _ := net.LookupIP(seed)
+		fmt.Println("")
+
+		for _, ip := range ips {
+			peer.Hello(ip)
+		}
+	}
 }
