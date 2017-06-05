@@ -4,6 +4,7 @@ import "fmt"
 import "net"
 import "bytes"
 import "crypto/sha256"
+import "math/rand"
 
 type BitcoinNet uint32
 
@@ -28,12 +29,11 @@ func Hello(ip net.IP) bool {
 	conn, err := net.DialTimeout("tcp", "["+ip.String()+"]:8333", 100000000)
 	if err == nil {
 		fmt.Println(" ", conn, err)
-		ourNA := &NetAddress{
-			Services: Services,
-		}
+		ourNA := &NetAddress{Services: 0}
+		theirNA := &NetAddress{Services: 0}
 		nonce := uint64(rand.Int63())
-		msg := NewMsgVersion(ourNA, theirNA, nonce, blockNum)
-		n, err := WriteMessage(conn, "version", ProtocolVersion, MainNet)
+		msg := NewMsgVersion(ourNA, theirNA, nonce, 0)
+		n, err := WriteMessage(conn, msg, ProtocolVersion, MainNet)
 		return true
 	}
 	return false
