@@ -23,6 +23,21 @@ type MsgVersion struct {
 	DisableRelayTx  bool
 }
 
+func NewMsgVersion(me *NetAddress, you *NetAddress, nonce uint64, lastBlock int32) *MsgVersion {
+
+	return &MsgVersion{
+		ProtocolVersion: int32(ProtocolVersion),
+		Services:        0,
+		Timestamp:       time.Unix(time.Now().Unix(), 0),
+		AddrYou:         *you,
+		AddrMe:          *me,
+		Nonce:           nonce,
+		UserAgent:       DefaultUserAgent,
+		LastBlock:       lastBlock,
+		DisableRelayTx:  false,
+	}
+}
+
 /*
 
 func (msg *MsgVersion) HasService(service ServiceFlag) bool {
@@ -146,21 +161,6 @@ func (msg *MsgVersion) MaxPayloadLength(pver uint32) uint32 {
 		MaxUserAgentLen
 }
 
-func NewMsgVersion(me *NetAddress, you *NetAddress, nonce uint64,
-	lastBlock int32) *MsgVersion {
-
-	return &MsgVersion{
-		ProtocolVersion: int32(ProtocolVersion),
-		Services:        0,
-		Timestamp:       time.Unix(time.Now().Unix(), 0),
-		AddrYou:         *you,
-		AddrMe:          *me,
-		Nonce:           nonce,
-		UserAgent:       DefaultUserAgent,
-		LastBlock:       lastBlock,
-		DisableRelayTx:  false,
-	}
-}
 
 func validateUserAgent(userAgent string) error {
 	if len(userAgent) > MaxUserAgentLen {

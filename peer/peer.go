@@ -3,42 +3,40 @@ package peer
 import "fmt"
 import "net"
 import "bytes"
-
-//import "github.com/davecgh/go-spew/spew"
-
-func Hello(ip net.IP) bool {
-	//fmt.Println(" ", ip)
-	conn, err := net.DialTimeout("tcp", "["+ip.String()+"]:8333", 100000000)
-	if err == nil {
-		fmt.Println(" ", conn, err)
-		return true
-	}
-	return false
-}
+import "crypto/sha256"
 
 type BitcoinNet uint32
 
 const CommandSize = 12
-const BIP0031Version uint32 = 60000
 const ProtocolVersion uint32 = 70013
 const MainNet BitcoinNet = 0xd9b4bef9
 
-func WriteMessage() error {
-	WriteMessage(p, "version")
-	n, err := wire.WriteMessageN(p.conn, msg, ProtocolVersion, MainNet)
-}
-
 type messageHeader struct {
-	magic    BitcoinNet // 4 bytes
-	command  string     // 12 bytes
-	length   uint32     // 4 bytes
-	checksum [4]byte    // 4 bytes
+	magic    BitcoinNet
+	command  string
+	length   uint32
+	checksum [4]byte
 }
 
 func DoubleHashB(b []byte) []byte {
 	first := sha256.Sum256(b)
 	second := sha256.Sum256(first[:])
 	return second[:]
+}
+
+func Hello(ip net.IP) bool {
+	conn, err := net.DialTimeout("tcp", "["+ip.String()+"]:8333", 100000000)
+	if err == nil {
+		fmt.Println(" ", conn, err)
+		ourNA := &NetAddress{
+			Services: Services,
+		}
+		nonce := uint64(rand.Int63())
+		msg := NewMsgVersion(ourNA, theirNA, nonce, blockNum)
+		n, err := WriteMessage(conn, "version", ProtocolVersion, MainNet)
+		return true
+	}
+	return false
 }
 
 func WriteMessage(w io.Writer, cmd string, pver uint32, btcnet BitcoinNet) (int, error) {
