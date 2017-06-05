@@ -14,12 +14,19 @@ var Seeds = []string{
 }
 
 func main() {
+	b := false
 	for _, seed := range Seeds {
 		ips, _ := net.LookupIP(seed)
 		fmt.Println("")
 
 		for _, ip := range ips {
-			peer.Hello(ip)
+			b = peer.Hello(ip)
+			if b {
+				break
+			}
+		}
+		if b {
+			break
 		}
 	}
 }
