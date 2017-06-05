@@ -16,15 +16,17 @@ func Hello(ip net.IP) bool {
 	return false
 }
 
-func WriteMessage() error {
-	WriteMessage(p, "version")
-	n, err := wire.WriteMessageN(p.conn, msg, p.ProtocolVersion(),
-		p.cfg.ChainParams.Net)
-}
-
 type BitcoinNet uint32
 
 const CommandSize = 12
+const BIP0031Version uint32 = 60000
+const ProtocolVersion uint32 = 70013
+const MainNet BitcoinNet = 0xd9b4bef9
+
+func WriteMessage() error {
+	WriteMessage(p, "version")
+	n, err := wire.WriteMessageN(p.conn, msg, ProtocolVersion, MainNet)
+}
 
 type messageHeader struct {
 	magic    BitcoinNet // 4 bytes
